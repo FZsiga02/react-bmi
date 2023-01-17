@@ -9,6 +9,8 @@ interface State {
   idealValue: number;
   idealScale: string;
   idealBool: boolean;
+  lowest: number;
+  highest: number;
 }
 
 class App extends Component<{}, State> {
@@ -23,6 +25,8 @@ class App extends Component<{}, State> {
       idealValue: 0,
       idealScale: '',
       idealBool: false,
+      lowest: 0,
+      highest: 0,
     }
   }
 
@@ -38,25 +42,38 @@ class App extends Component<{}, State> {
   boolCalculate = () => {
     if (this.state.result <= 18.5) {
       this.setState({idealBool: false})
+      this.scaleCalculate();
     } else if (this.state.result > 18.5 && this.state.result < 25) {
       this.setState({idealBool: true})
     } else if (this.state.result >= 25 && this.state.result < 30) {
       this.setState({idealBool: false})
+      this.scaleCalculate();
     } else if (this.state.result >= 30 && this.state.result < 35) {
       this.setState({idealBool: false})
+      this.scaleCalculate();
     } else if (this.state.result >= 35 && this.state.result < 40) {
       this.setState({idealBool: false})
+      this.scaleCalculate();
     } else {
       this.setState({idealBool: false})
+      this.scaleCalculate();
     }
     if (this.state.idealBool == false) {
       this.setState({
         idealValue: 20 * (this.state.heightValue / 100) ** 2
       })
     }
+
+  }
+
+  scaleCalculate = () => {
+    this.setState({lowest: 18.5 * (this.state.heightValue / 100) ** 2})
+    this.setState({highest: 24.9 * (this.state.heightValue / 100) ** 2})
+    //this.setState({idealScale: this.state.lowest + '-' + this.state.highest + 'kg'})
   }
 
   render() {
+    const idealScale = this.state.lowest + '-' + this.state.highest + 'kg'
     let category = '';
     if (this.state.result <= 18.5) {
       category = 'sovany';
@@ -115,10 +132,10 @@ class App extends Component<{}, State> {
           </table>
         </div>
         <div id='idealDiv'>
-          <p>AZ IDEÁLIS TESTTÖMEGE: </p><output id='ideal'>{ Math.round(this.state.idealValue * 100) / 100 }</output><br/>
+          <p>AZ IDEÁLIS TESTTÖMEGE: </p><output id='ideal'>{ Math.round(this.state.idealValue * 100) / 100 } kg</output><br/>
           <table id='idealTable'>
             <tr>
-              <td><output id='idealValues'></output></td>
+              <td><output id='idealValues'>{ idealScale }</output></td>
               <td>Kívánatos szélső érték</td>
             </tr>
           </table>
