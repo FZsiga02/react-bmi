@@ -6,11 +6,6 @@ interface State {
   result: number;
   heightValue: number;
   massValue: number;
-  idealValue: number;
-  idealScale: string;
-  idealBool: boolean;
-  lowest: number;
-  highest: number;
 }
 
 class App extends Component<{}, State> {
@@ -22,11 +17,6 @@ class App extends Component<{}, State> {
       result: 0,
       heightValue: 0,
       massValue: 0,
-      idealValue: 0,
-      idealScale: '',
-      idealBool: false,
-      lowest: 0,
-      highest: 0,
     }
   }
 
@@ -36,44 +26,14 @@ class App extends Component<{}, State> {
     this.setState({
       result: this.state.massValue / (this.state.heightValue / 100) ** 2
     });
-    this.boolCalculate();
-  }
-
-  boolCalculate = () => {
-    if (this.state.result <= 18.5) {
-      this.setState({idealBool: false})
-      this.scaleCalculate();
-    } else if (this.state.result > 18.5 && this.state.result < 25) {
-      this.setState({idealBool: true})
-    } else if (this.state.result >= 25 && this.state.result < 30) {
-      this.setState({idealBool: false})
-      this.scaleCalculate();
-    } else if (this.state.result >= 30 && this.state.result < 35) {
-      this.setState({idealBool: false})
-      this.scaleCalculate();
-    } else if (this.state.result >= 35 && this.state.result < 40) {
-      this.setState({idealBool: false})
-      this.scaleCalculate();
-    } else {
-      this.setState({idealBool: false})
-      this.scaleCalculate();
-    }
-    if (this.state.idealBool == false) {
-      this.setState({
-        idealValue: 20 * (this.state.heightValue / 100) ** 2
-      })
-    }
-
-  }
-
-  scaleCalculate = () => {
-    this.setState({lowest: 18.5 * (this.state.heightValue / 100) ** 2})
-    this.setState({highest: 24.9 * (this.state.heightValue / 100) ** 2})
-    //this.setState({idealScale: this.state.lowest + '-' + this.state.highest + 'kg'})
   }
 
   render() {
-    const idealScale = this.state.lowest + '-' + this.state.highest + 'kg'
+    const idealBMI = 21.75;
+    const idealMass = idealBMI * (this.state.heightValue / 100) ** 2;
+    const idealLowest = 18.5 * (this.state.heightValue / 100) ** 2;
+    const idealHighest = 18.5 * (this.state.heightValue / 100) ** 2;
+
     let category = '';
     if (this.state.result <= 18.5) {
       category = 'sovany';
@@ -91,51 +51,51 @@ class App extends Component<{}, State> {
 
     return (
       <div className="App">
-        <div id='calculator'>
-          <label>Írja be cm-ben számított testmagasságát (cipő nélkül mérve): </label>
-          <input type="number" id='height' onChange={(e) => this.setState({ heightValue: parseInt(e.currentTarget.value)})}/>
-          <label> cm</label><br/>
-  
-          <label>Írja be kg-ban számított testsúlyát (cipő nélkül mérve): </label>
-          <input type="number" id='mass' onChange={(e) => this.setState({ massValue: parseInt(e.currentTarget.value)})}/>
-          <label> kg</label><br/>
-  
+        <div>
+          Írja be cm-ben számított testmagasságát (cipő nélkül mérve):
+          <input type="number" onChange={(e) => this.setState({ heightValue: parseInt(e.currentTarget.value)})}/> cm
+        </div>
+        <div>
+          Írja be kg-ban számított testsúlyát (cipő nélkül mérve):
+          <input type="number" onChange={(e) => this.setState({ massValue: parseInt(e.currentTarget.value)})}/> kg
+          </div>
+          <div>
           <button onClick={this.calculate}>Számítás</button>
         </div>
-        <div id='tableDiv'>
-          <p>AZ ÖN BMI ÉRTÉKE: </p><output id='BMI'>{ Math.round(this.state.result * 100) / 100 }</output><br/>
-          <table id='table'>
+        <div>AZ ÖN BMI ÉRTÉKE: { this.state.result.toFixed(2) }</div>
+        <div>
+          <table>
             <tr className={ category == 'sovany' ? 'sarga' : '' }>
               <td>18,5 vagy kevesebb</td>
-              <td>SOVÁNY</td>
+              <th>SOVÁNY</th>
             </tr>
             <tr className={ category == 'normal' ? 'sarga' : '' }>
               <td>18,5-24,9</td>
-              <td>NORMÁL</td>
+              <th>NORMÁL</th>
             </tr>
             <tr className={ category == 'tulsuly' ? 'sarga' : '' }>
               <td>25-29,9</td>
-              <td>TÚLSÚLY</td>
+              <th>TÚLSÚLY</th>
             </tr>
             <tr className={ category == 'elhizas1' ? 'sarga' : '' }>
               <td>30-34,9</td>
-              <td>I. FOKÚ ELHÍZÁS</td>
+              <th>I. FOKÚ ELHÍZÁS</th>
             </tr>
             <tr className={ category == 'elhizas2' ? 'sarga' : '' }>
               <td>35-39,9</td>
-              <td>II. FOKÚ ELHÍZÁS</td>
+              <th>II. FOKÚ ELHÍZÁS</th>
             </tr>
             <tr className={ category == 'elhizas3' ? 'sarga' : '' }>
               <td>40 vagy több</td>
-              <td>III. FOKÚ ELHÍZÁS</td>
+              <th>III. FOKÚ ELHÍZÁS</th>
             </tr>
           </table>
         </div>
-        <div id='idealDiv'>
-          <p>AZ IDEÁLIS TESTTÖMEGE: </p><output id='ideal'>{ Math.round(this.state.idealValue * 100) / 100 } kg</output><br/>
-          <table id='idealTable'>
+        <div>AZ IDEÁLIS TESTTÖMEGE: { idealMass + 'kg' }</div>
+        <div>
+          <table>
             <tr>
-              <td><output id='idealValues'>{ idealScale }</output></td>
+              <td>{ idealLowest + '-' + idealHighest + 'kg' }</td>
               <td>Kívánatos szélső érték</td>
             </tr>
           </table>
